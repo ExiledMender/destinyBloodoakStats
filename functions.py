@@ -52,9 +52,12 @@ def getClearCount(playerid, activityHash):
         if str(activity['activityHash']) == str(activityHash):
             return activity['values']['fullClears'] or 0
         else:
-            notfound = 0
-    return notfound
-
+            counter = 0
+        for activity in activities[str(playerid)]:
+            if str(activity['activityHash']) == str(activityHash):
+                counter += activity['values']['fullClears']
+    return counter
+    
 def flawlessList(playerid):
     rrBaseURL = 'https://b9bv2wd97h.execute-api.us-west-2.amazonaws.com/prod/api/player/'
     requestURL = playerid
@@ -77,6 +80,8 @@ def getTriumphsJSON(playerid, system=3):
 def playerHasTriumph(playerid, recordHash):
     status = True
     triumphs = getTriumphsJSON(playerid)
+    if recordHash not in triumphs:
+        return False
     for part in triumphs[recordHash]['objectives']:
         status &= (str(part['complete']) == 'True')
     return status
